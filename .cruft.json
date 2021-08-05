@@ -1,0 +1,26 @@
+{
+  "template": "/home/tjs/git/RavenGIS/../cookiecutter-pypackage",
+  "commit": "50bc70448c57fc046cd8ff7801cda21cdca3d7aa",
+  "context": {
+    "cookiecutter": {
+      "full_name": "Trevor James Smith",
+      "email": "smith.trevorj@ouranos.ca",
+      "github_username": "Zeitsperre",
+      "project_name": "RavenGIS",
+      "project_slug": "ravengis",
+      "project_short_description": "Python geotools supporting spatial operations in the RavenWPS hydrologic modelling service.",
+      "pypi_username": "Zeitsperre",
+      "version": "0.1.0",
+      "use_pytest": "y",
+      "use_pypi_deployment_with_travis": "y",
+      "add_pyup_badge": "n",
+      "make_docs": "y",
+      "command_line_interface": "Click",
+      "create_author_file": "y",
+      "open_source_license": "MIT license",
+      "generated_with_cruft": "y",
+      "_template": "/home/tjs/git/RavenGIS/../cookiecutter-pypackage"
+    }
+  },
+  "directory": null
+}
