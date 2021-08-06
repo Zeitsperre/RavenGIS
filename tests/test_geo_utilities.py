@@ -55,9 +55,7 @@ class TestOperations:
 
         files = list()
         with tempfile.TemporaryDirectory(dir=tmp_path) as tdir:
-            files.extend(
-                io.generic_extract_archive(self.zipped_file, output_dir=tdir)
-            )
+            files.extend(io.generic_extract_archive(self.zipped_file, output_dir=tdir))
             assert len(files) == 5
             for f in files:
                 assert Path(f).exists()

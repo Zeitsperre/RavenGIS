@@ -13,7 +13,6 @@ from ravengis.utilities.testdata import get_local_testdata
 
 
 class TestHydroBASINS:
-
     def test_select_hybas_na_domain(self):
         bbox = (-68.0, 50.0) * 2
         dom = geoserver.select_hybas_domain(bbox)
@@ -27,7 +26,6 @@ class TestHydroBASINS:
 
 @pytest.mark.online
 class TestWFSHydroBASINS:
-
     @pytest.mark.xfail(error=OSError, reason="Network may be unreliable")
     @pytest.mark.xfail(reason="OWSLib>0.24.1 is needed.")
     def test_get_hydrobasins_location_wfs(self):
@@ -44,7 +42,7 @@ class TestWFSHydroBASINS:
         np.testing.assert_almost_equal(geom.area, 3.2530867)
 
     @pytest.mark.xfail(error=OSError, reason="Network may be unreliable")
-    @pytest.mark.xfail(error=NotImplementedError,reason="OWSLib>0.24.1 is needed.")
+    @pytest.mark.xfail(error=NotImplementedError, reason="OWSLib>0.24.1 is needed.")
     def test_get_hydrobasins_attributes_wfs(self):
         rio_grande = (-80.475, 8.4)
         resp = geoserver.get_hydrobasins_location_wfs(
@@ -91,7 +89,6 @@ class TestWFSHydroBASINS:
 
 @pytest.mark.online
 class TestHydroRouting:
-
     @pytest.mark.xfail(error=OSError, reason="Network may be unreliable")
     @pytest.mark.xfail(error=NotImplementedError, reason="OWSLib>0.24.1 is needed.")
     def test_hydro_routing_locations(self):
@@ -136,7 +133,6 @@ class TestHydroRouting:
 
 @pytest.mark.online
 class TestWFS:
-
     @pytest.mark.xfail(error=OSError, reason="Network may be unreliable")
     @pytest.mark.xfail(error=NotImplementedError, reason="OWSLib>0.24.1 is needed.")
     def test_get_location_wfs_point(self):

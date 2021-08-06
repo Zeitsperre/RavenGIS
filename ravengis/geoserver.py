@@ -41,7 +41,9 @@ except (ImportError, ModuleNotFoundError):
 # Can be set at runtime with `$ env GEO_URL=https://xx.yy.zz/geoserver/ ...`.
 GEOSERVER_URL = os.getenv("GEOSERVER_URL", "https://pavics.ouranos.ca/geoserver/")
 if GEOSERVER_URL == "https://pavics.ouranos.ca/geoserver/":
-    warnings.warn("'GEO_URL' not explicitly set. Using default GeoServer: https://pavics.ouranos.ca/geoserver/")
+    warnings.warn(
+        "'GEO_URL' not explicitly set. Using default GeoServer: https://pavics.ouranos.ca/geoserver/"
+    )
 
 # We store the contour of different hydrobasins domains
 hybas_dir = Path(__file__).parent / "data" / "hydrobasins_domains"
