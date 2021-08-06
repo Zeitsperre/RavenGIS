@@ -1,6 +1,7 @@
 affine
 Click
 fiona
+geojson
 geopandas>=0.9
 lxml
 netCDF4

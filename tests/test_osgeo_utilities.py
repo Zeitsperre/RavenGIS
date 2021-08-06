@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-import fiona
+import geojson
 import numpy as np
 import pytest
 import rasterio
@@ -144,9 +144,8 @@ class TestGdalOgrFunctions:
         np.testing.assert_almost_equal(dem_properties["elevation"], 79.0341, 4)
         np.testing.assert_almost_equal(dem_properties["slope"], 64.43654, 5)
 
-        with fiona.open(self.geojson_file) as gj:
-            feature = next(iter(gj))
-            geom = sgeo.shape(feature["geometry"])
+        feat = geojson.load(open(self.geojson_file))
+        geom = sgeo.shape(feat[0].geometry)
 
         region_dem_properties = analysis.dem_prop(self.raster_file, geom=geom)
         np.testing.assert_almost_equal(region_dem_properties["aspect"], 280.681, 3)
@@ -210,9 +209,8 @@ class TestGenericGeoOperations:
         )
 
     def test_raster_clip(self, tmp_path):
-        with fiona.open(self.geojson_file) as gj:
-            feature = next(iter(gj))
-            geom = sgeo.shape(feature["geometry"])
+        feat = geojson.load(open(self.geojson_file))
+        geom = sgeo.shape(feat[0].geometry)
 
         clipped_file = tempfile.NamedTemporaryFile(
             prefix="clipped_", suffix=".tiff", delete=False, dir=tmp_path

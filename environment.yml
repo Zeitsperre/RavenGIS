@@ -8,6 +8,7 @@ dependencies:
   - click
   - fiona
   - gdal >=3.0.0
+  - geojson
   - geopandas >=0.9
   - lxml
   - netcdf4
