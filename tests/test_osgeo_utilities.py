@@ -1,17 +1,15 @@
 import tempfile
 from pathlib import Path
 
+import fiona
 import numpy as np
 import pytest
-
-from ravengis.utilities.testdata import get_local_testdata
-
-from ravengis import raster, io, analysis, geo
-from ravengis.utilities import checks
-
-import fiona
 import rasterio
 import shapely.geometry as sgeo
+
+from ravengis import analysis, io, raster
+from ravengis.utilities.checks import boundary_check, feature_contains
+from ravengis.utilities.testdata import get_local_testdata
 
 
 class TestOperations:
@@ -86,13 +84,13 @@ class TestFileInfoFuncs:
         # NOTE: does not presently accept zipped files.
 
         with pytest.warns(None):
-            checks.boundary_check([self.geojson_file, self.raster_file], max_y=80)
+            boundary_check([self.geojson_file, self.raster_file], max_y=80)
 
         with pytest.warns(UserWarning):
-            checks.boundary_check([self.geojson_file, self.raster_file], max_y=15)
+            boundary_check([self.geojson_file, self.raster_file], max_y=15)
 
         with pytest.raises(FileNotFoundError):
-            checks.boundary_check([self.non_existing_file])
+            boundary_check([self.non_existing_file])
 
     @pytest.mark.skip(reason="Not presently testable")
     def test_multipolygon_check(self):
@@ -155,59 +153,12 @@ class TestGdalOgrFunctions:
         np.testing.assert_almost_equal(region_dem_properties["elevation"], 145.8899, 4)
         np.testing.assert_almost_equal(region_dem_properties["slope"], 61.26508, 5)
 
-    # Slope values are high due to data values using Geographic CRS
-    def test_geom_properties(self):
-        with fiona.open(self.geojson_file) as gj:
-            iterable = iter(gj)
-            feature_1 = next(iterable)
-            feature_2 = next(iterable)
-            geom_1 = sgeo.shape(feature_1["geometry"])
-            geom_2 = sgeo.shape(feature_2["geometry"])
-
-        geom_1_properties = analysis.geom_prop(geom_1)
-        np.testing.assert_almost_equal(geom_1_properties["area"], 357.9811899)
-        np.testing.assert_almost_equal(
-            geom_1_properties["centroid"], (-128.3959836, 19.1572278)
-        )
-        np.testing.assert_almost_equal(geom_1_properties["perimeter"], 68.4580077)
-        np.testing.assert_almost_equal(geom_1_properties["gravelius"], 1.0206790)
-
-        geom_2_properties = analysis.geom_prop(geom_2)
-        np.testing.assert_almost_equal(geom_2_properties["area"], 361.5114221)
-        np.testing.assert_almost_equal(
-            geom_2_properties["centroid"], (-70.2394629, 45.7698029)
-        )
-        np.testing.assert_almost_equal(geom_2_properties["perimeter"], 96.1035859)
-        np.testing.assert_almost_equal(geom_2_properties["gravelius"], 1.4258493)
-
 
 class TestGenericGeoOperations:
     geojson_file = get_local_testdata("polygons/mars.geojson")
     raster_file = get_local_testdata(
         "nasa/Mars_MGS_MOLA_DEM_georeferenced_region_compressed.tiff"
     )
-
-    def test_vector_reprojection(self, tmp_path):
-        # TODO: It would be awesome if this returned a temporary filepath if no file given.
-        reproj_file = tempfile.NamedTemporaryFile(
-            prefix="reproj_", suffix=".geojson", delete=False, dir=tmp_path
-        ).name
-        geo.generic_vector_reproject(
-            self.geojson_file, projected=reproj_file, target_crs="EPSG:3348"
-        )
-
-        with fiona.open(reproj_file) as gj:
-            iterable = iter(gj)
-            feature = next(iterable)
-            geom = sgeo.shape(feature["geometry"])
-
-        geom_properties = analysis.geom_prop(geom)
-        np.testing.assert_almost_equal(geom_properties["area"], 6450001762792, 0)
-        np.testing.assert_almost_equal(
-            geom_properties["centroid"], (1645777.7589835, -933242.1203143)
-        )
-        np.testing.assert_almost_equal(geom_properties["perimeter"], 9194343.1759303)
-        np.testing.assert_almost_equal(geom_properties["gravelius"], 1.0212589)
 
     def test_raster_warp(self, tmp_path):
         # TODO: It would be awesome if this returned a temporary filepath if no file given.
@@ -264,7 +215,7 @@ class TestGenericGeoOperations:
             geom = sgeo.shape(feature["geometry"])
 
         clipped_file = tempfile.NamedTemporaryFile(
-            prefix="reproj_", suffix=".tiff", delete=False, dir=tmp_path
+            prefix="clipped_", suffix=".tiff", delete=False, dir=tmp_path
         ).name
         raster.generic_raster_clip(self.raster_file, clipped_file, geometry=geom)
 
@@ -275,20 +226,6 @@ class TestGenericGeoOperations:
             assert data.min() == 0
             assert data.max() == 255
             np.testing.assert_almost_equal(data.mean(), 102.8222965)
-
-    def test_shapely_pyproj_transform(self):
-        with fiona.open(self.geojson_file) as gj:
-            feature = next(iter(gj))
-            geom = sgeo.shape(feature["geometry"])
-
-        transformed = geo.geom_transform(geom, target_crs="EPSG:3348")
-        np.testing.assert_almost_equal(
-            transformed.bounds,
-            (188140.3820599, -2374936.1363096, 3086554.0207066, 409691.2180337),
-        )
-        np.testing.assert_almost_equal(transformed.centroid.x, 1645777.7589835)
-        np.testing.assert_almost_equal(transformed.centroid.y, -933242.1203143)
-        np.testing.assert_almost_equal(transformed.area, 6450001762792, 0)
 
 
 class TestGIS:
@@ -310,7 +247,7 @@ class TestGIS:
 
     def test_feature_contains(self):
         point = -69.0, 45
-        assert isinstance(checks.feature_contains(point, self.vector_file), dict)
+        assert isinstance(feature_contains(point, self.vector_file), dict)
         assert isinstance(
-            checks.feature_contains(sgeo.Point(point), self.vector_file), dict
+            feature_contains(sgeo.Point(point), self.vector_file), dict
         )

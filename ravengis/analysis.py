@@ -1,13 +1,12 @@
 import logging
-import math
 import tempfile
 from pathlib import Path
 from typing import List, Optional, Union
 
 import numpy as np
 import rasterio
-from osgeo.gdal import Dataset, DEMProcessing
-from shapely.geometry import GeometryCollection, MultiPolygon, Polygon, shape
+from osgeo.gdal import Dataset, DEMProcessing  # noqa
+from shapely.geometry import MultiPolygon, Polygon
 
 from ravengis.raster import generic_raster_clip
 
@@ -16,40 +15,6 @@ from ravengis.raster import generic_raster_clip
 GDAL_TIFF_COMPRESSION_OPTION = "compress=lzw"
 
 LOGGER = logging.getLogger("RavenGIS")
-
-
-def geom_prop(geom: Union[Polygon, MultiPolygon, GeometryCollection]) -> dict:
-    """Return a dictionary of geometry properties.
-
-    Parameters
-    ----------
-    geom : Union[Polygon, MultiPolygon, GeometryCollection]
-      Geometry to analyze.
-
-    Returns
-    -------
-    dict
-      Dictionary storing polygon area, centroid location, perimeter and gravelius shape index.
-
-    Notes
-    -----
-    Some of the properties should be computed using an equal-area projection.
-    """
-
-    geom = shape(geom)
-    lon, lat = geom.centroid.x, geom.centroid.y
-    if (lon > 180) or (lon < -180) or (lat > 90) or (lat < -90):
-        LOGGER.warning("Shape centroid is not in decimal degrees.")
-    area = geom.area
-    length = geom.length
-    gravelius = length / 2 / math.sqrt(math.pi * area)
-    parameters = {
-        "area": area,
-        "centroid": (lon, lat),
-        "perimeter": length,
-        "gravelius": gravelius,
-    }
-    return parameters
 
 
 def dem_prop(
