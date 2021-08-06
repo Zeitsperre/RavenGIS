@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import Iterable, Optional, Sequence, Tuple, Union
 from urllib.parse import urljoin
 
-from requests import Request
 import fiona
 import geopandas as gpd
 import pandas as pd
@@ -28,6 +27,7 @@ from lxml import etree
 from owslib.fes import PropertyIsLike
 from owslib.wcs import WebCoverageService
 from owslib.wfs import WebFeatureService
+from requests import Request
 
 try:
     from owslib.fes2 import Intersects

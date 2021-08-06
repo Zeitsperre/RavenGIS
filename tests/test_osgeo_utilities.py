@@ -246,6 +246,4 @@ class TestGIS:
     def test_feature_contains(self):
         point = -69.0, 45
         assert isinstance(feature_contains(point, self.vector_file), dict)
-        assert isinstance(
-            feature_contains(sgeo.Point(point), self.vector_file), dict
-        )
+        assert isinstance(feature_contains(sgeo.Point(point), self.vector_file), dict)

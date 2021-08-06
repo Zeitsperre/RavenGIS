@@ -15,7 +15,7 @@ import rasterio.vrt
 import rasterio.warp
 from affine import Affine
 from pyproj.crs import CRS
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import MultiPolygon, Polygon
 
 from ravengis.geoserver import get_raster_wcs
 from ravengis.io import get_bbox

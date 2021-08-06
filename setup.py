@@ -3,7 +3,7 @@
 """The setup script."""
 import subprocess
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.rst") as readme_file:
     readme = readme_file.read()
@@ -22,6 +22,7 @@ try:
 except subprocess.CalledProcessError:
     pass
 requirements.extend([dependency for dependency in open("requirements.txt").readlines()])
+
 
 setup_requirements = [
     "pytest-runner",

@@ -3,7 +3,6 @@
 """Tests for `ravengis` package."""
 
 import pytest
-
 from click.testing import CliRunner
 
 from ravengis import cli

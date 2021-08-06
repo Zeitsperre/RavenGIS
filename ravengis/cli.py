@@ -1,5 +1,6 @@
 """Console script for ravengis."""
 import sys
+
 import click
 
 

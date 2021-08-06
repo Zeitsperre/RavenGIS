@@ -2,9 +2,9 @@
 Checks for various geospatial and IO conditions.
 """
 
-from collections import abc
 import logging
 import warnings
+from collections import abc
 from pathlib import Path
 from typing import List, Sequence, Tuple, Union
 
