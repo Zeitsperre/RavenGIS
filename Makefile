@@ -49,7 +49,7 @@ clean-test: ## remove test and coverage artifacts
 
 lint: ## check style with flake8
 	flake8 ravengis tests
-	black --check --target-version py36 ravengis tests
+	black --check ravengis tests
 
 test: ## run tests quickly with the default Python
 	pytest

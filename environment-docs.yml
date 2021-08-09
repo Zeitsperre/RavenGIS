@@ -8,6 +8,5 @@ dependencies:
   - sphinx_rtd_theme
   - sphinx-autoapi
   - sphinxcontrib-napoleon
-- click
+  - click
   - sphinx-click
-
