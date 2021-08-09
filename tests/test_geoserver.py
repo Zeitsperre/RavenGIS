@@ -6,7 +6,7 @@ import pytest
 import rasterio
 import shapely.geometry as sgeo  # noqa
 
-from ravengis import geo, geoserver, io
+from ravengis import geoserver, io
 from ravengis.utilities.testdata import get_local_testdata
 
 # FIXME: Remove XFAIL marks once OWSLib > 0.24.1 is released.
@@ -176,20 +176,18 @@ class TestWCS:
     @pytest.mark.xfail(error=OSError, reason="Network may be unreliable")
     def test_get_raster_wcs(self, tmp_path):
         # TODO: This CRS needs to be redefined using modern pyproj-compatible strings.
-        nalcms_crs = "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs=True"
+        # nalcms_crs = "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs=True"
 
         with tempfile.NamedTemporaryFile(
             prefix="reprojected_", suffix=".json", dir=tmp_path
         ) as projected:
-            geo.generic_vector_reproject(
-                self.vector_file, projected.name, target_crs=nalcms_crs
-            )
+            # geo.generic_vector_reproject(
+            #     self.vector_file, projected.name, target_crs=nalcms_crs
+            # )
             bbox = io.get_bbox(projected.name)
 
         raster_url = "public:CEC_NALCMS_LandUse_2010"
-        raster_bytes = geoserver.get_raster_wcs(
-            bbox, geographic=False, layer=raster_url
-        )
+        raster_bytes = geoserver.get_raster_wcs(bbox, geographic=True, layer=raster_url)
 
         with tempfile.NamedTemporaryFile(
             prefix="wcs_", suffix=".tiff", dir=tmp_path
